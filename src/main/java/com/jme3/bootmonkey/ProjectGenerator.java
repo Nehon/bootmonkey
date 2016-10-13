@@ -12,8 +12,8 @@ import java.util.*;
 /**
  * Created by Nehon on 12/10/2016.
  * Very Basic project scaffolding tool for JME3.
- * 1. Clones a template repository into a local folder
- * 2. attempt to change lines in project files as described in the replacement.yml
+ * 1. Clones a template repository into a local folder. For adaptation, the template repo must contain a bootmonkey.yml file.
+ * 2. attempt to change lines in project files as described in the bootmonkey.yml
  *      the file must be follow that structure:
  *      replace:
  *          [filePath]:
@@ -27,6 +27,7 @@ import java.util.*;
  *      - baseDir: the directory where to create the repo.
  *      - projectName: the project name.
  *      - packageName: the new project base package.
+ *      - packagePath: the folder path of the package ('.' replaced with '/')
  *
  * 3. Clean up
  *      Will copy and delete files according to what's found in the yaml configuration file
@@ -44,6 +45,8 @@ import java.util.*;
  */
 public class ProjectGenerator {
 
+    private static String CONF_FILE = "bootmonkey.yml";
+
     private Map<String, Map<String, String>> replacements;
     private Map<String, String> copies;
     private List<String> deletes;
@@ -53,19 +56,26 @@ public class ProjectGenerator {
     private List<GenerationListener> listeners = new ArrayList<>();
 
     public ProjectGenerator() {
-        Yaml yaml = new Yaml();
-        Map<String, Object> map = (Map<String, Object>)yaml.load(this.getClass().getResourceAsStream("/replacement.yml"));
 
-        if (map.get("replace") != null) {
-            replacements = (Map<String, Map<String, String>> )map.get("replace");
-        }
-        if (map.get("copy") != null) {
-            copies = (Map<String, String>)map.get("copy");
-        }
-        if (map.get("delete") != null) {
-            deletes = (List<String>)map.get("delete");
-        }
+    }
 
+    private void readConfiguration(String projectPath) {
+        try {
+            Yaml yaml = new Yaml();
+            Map<String, Object> map = (Map<String, Object>) yaml.load(FileUtils.readFileToString(new File(projectPath + CONF_FILE), "UTF-8"));
+
+            if (map.get("replace") != null) {
+                replacements = (Map<String, Map<String, String>>) map.get("replace");
+            }
+            if (map.get("copy") != null) {
+                copies = (Map<String, String>) map.get("copy");
+            }
+            if (map.get("delete") != null) {
+                deletes = (List<String>) map.get("delete");
+            }
+        } catch (IOException e){
+            reportError("No configuration (" + CONF_FILE + ") file found in the template project. No adaptation has been done.", e);
+        }
     }
 
 
@@ -99,6 +109,9 @@ public class ProjectGenerator {
         progress("Cloning template project...");
         cloneTemplate(templateUrl, projectPath);
 
+        progress("Reading configuration...");
+        readConfiguration(projectPath);
+
         progress("Adapting project...");
         replacements.entrySet().forEach((e) -> adaptFile(projectPath + e.getKey(), e.getValue()));
 
@@ -129,6 +142,11 @@ public class ProjectGenerator {
                 reportError("Error while deleting " + subDelete, new Exception(delete));
             }
         }
+
+        //delete the configuration file if any
+        FileUtils.deleteQuietly(new File(projectPath + CONF_FILE));
+
+
     }
 
     private void cloneTemplate(String templateUrl, String projectPath) {

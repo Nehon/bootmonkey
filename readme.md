@@ -21,6 +21,7 @@ Very Basic project scaffolding tool for JME3.
        - baseDir: the directory where to create the repo.
        - projectName: the project name.
        - packageName: the new project base package.
+       - packagePath: the folder path of the package ('.' replaced with '/')
 
 3. Clean up
 
