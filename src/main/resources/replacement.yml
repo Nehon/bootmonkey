@@ -1,7 +1,15 @@
-build.gradle:
-  mainClassName='mygame.Main': mainClassName='${packageName}.Main'
-  ext.jmeVersion\s*=\s*.*: ext.jmeVersion = '${jmeVersion}'
-  #jcenter\(\):  jcenter {url "http://jcenter.bintray.com/"}
+replace:
+  build.gradle:
+    mainClassName='mygame.Main': mainClassName='${packageName}.Main'
+    ext.jmeVersion\s*=\s*.*: ext.jmeVersion = '${jmeVersion}'
+    #jcenter\(\):  jcenter {url "http://jcenter.bintray.com/"}
 
-src/main/java/mygame/Main.java:
-  package mygame;: package ${packageName};
+  src/main/java/mygame/Main.java:
+    package mygame;: package ${packageName};
+
+copy:
+  src/main/java/mygame/Main.java: src/main/java/${packagePath}/Main.java
+
+delete:
+  - .git/
+  - src/main/java/mygame/
