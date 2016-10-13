@@ -2,7 +2,9 @@ BootMonkey
 ==========
 
 Very Basic project scaffolding tool for JME3.
+
 1. Clones a template repository into a local folder. For adaptation, the remplate repo must contain a bootmonkey.yml file.
+
 2. Attempts to change lines in project files as described in the bootmonkey.yml
       the file must be follow that structure:
       ```
@@ -32,4 +34,3 @@ Very Basic project scaffolding tool for JME3.
            - [fileORDirectoryPath]
            - ...
     ```
- 
