@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -39,8 +40,7 @@ import java.util.*;
  *          - [fileORDirectoryPath]
  *          - ...
  *
- * The generate method will return a list of errors if any.
- * You can add GenerationListener that will be called whenever the generation process reaches a new step.
+ * You can add GenerationListener that will be called whenever the generation process reaches a new step, with errors from the previous step.
  *
  */
 public class ProjectGenerator {
@@ -92,12 +92,11 @@ public class ProjectGenerator {
      *
      * this method returns a list of error that occurred during the generation
      * @param params the params map.
-     * @return the errors that occurred during the generation.
      */
-    public List<String> generate(Map<String, String> params){
+    public void generate(Map<String, String> params){
+
         progress("Initializing...");
         sub = new StrSubstitutor(params, "${", "}");
-        lastGenerationErrors.clear();
         String templateUrl = params.get("templateUrl");
         String baseDir = params.get("baseDir");
         String projectName = params.get("projectName");
@@ -107,7 +106,10 @@ public class ProjectGenerator {
         String projectPath = baseDir + projectName + "/";
 
         progress("Cloning template project...");
-        cloneTemplate(templateUrl, projectPath);
+        if(!cloneTemplate(templateUrl, projectPath)){
+            progress("Aborted.");
+            return;
+        }
 
         progress("Reading configuration...");
         readConfiguration(projectPath);
@@ -118,12 +120,8 @@ public class ProjectGenerator {
         progress("Cleaning up...");
         moveAndCleanupFiles(projectPath);
 
-        if(lastGenerationErrors.isEmpty()) {
-            progress("Done.");
-        } else {
-            progress("Done with errors.");
-        }
-        return Collections.unmodifiableList(lastGenerationErrors);
+        progress("Done.");
+
     }
 
     private void moveAndCleanupFiles(String projectPath) {
@@ -149,11 +147,13 @@ public class ProjectGenerator {
 
     }
 
-    private void cloneTemplate(String templateUrl, String projectPath) {
+    private boolean cloneTemplate(String templateUrl, String projectPath) {
         try (Git git = Git.cloneRepository().setURI(templateUrl)
                 .setDirectory(new File(projectPath)).call()){
-        } catch (GitAPIException e) {
+            return true;
+        } catch (GitAPIException | JGitInternalException e) {
             reportError("Error cloning repository " + templateUrl , e);
+            return false;
         }
     }
 
@@ -188,6 +188,7 @@ public class ProjectGenerator {
     }
 
     private void progress(String newState){
-        listeners.forEach((l) -> l.progress(newState));
+        listeners.forEach((l) -> l.progress(newState, new ArrayList<>(lastGenerationErrors)));
+        lastGenerationErrors.clear();
     }
 }

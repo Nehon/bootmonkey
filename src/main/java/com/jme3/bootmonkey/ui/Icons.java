@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 public class Icons {
 
-    public final static ImageIcon icon = new ImageIcon(Icons.class.getResource("/icons/favicon.ico"));
+   // public final static ImageIcon icon = new ImageIcon(Icons.class.getResource("/icons/favicon.ico"));
 
 }
 

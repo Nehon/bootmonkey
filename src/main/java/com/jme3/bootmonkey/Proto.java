@@ -17,12 +17,15 @@ public class Proto {
         params.put("templateUrl", "https://github.com/Nehon/base-jme.git");
 
         ProjectGenerator generator = new ProjectGenerator();
-        generator.addGenerationListener(System.out::println);
+        generator.addGenerationListener((text , errors) -> {
+            for (String error : errors) {
+                System.err.println(error);
+            }
+            System.out.println(text);
+        });
 
-        List<String> errors = generator.generate(params);
-        for (String error : errors) {
-            System.err.println(error);
-        }
+       generator.generate(params);
+
 
     }
 

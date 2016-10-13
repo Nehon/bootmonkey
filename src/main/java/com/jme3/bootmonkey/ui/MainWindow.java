@@ -1,14 +1,20 @@
 package com.jme3.bootmonkey.ui;
 
+import com.jme3.bootmonkey.ProjectGenerator;
 import org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Nehon on 12/10/2016.
  */
 public class MainWindow {
+
+    private ProgressDialog progressDialog;
 
     public static void main(String... argv) throws Exception{
         new MainWindow();
@@ -21,15 +27,14 @@ public class MainWindow {
 
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
-                JFrame mainFrame = new JFrame("Boot monkey");
-                mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                //Add the ubiquitous "Hello World" label.
-                JLabel label = new JLabel("Create a new jMonkeyEngine3 project");
-                mainFrame.getContentPane().add(label);
+                final JFrame mainFrame = new JFrame("Boot monkey");
+                mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                mainFrame.getContentPane().setLayout(new BorderLayout());
+                mainFrame.setResizable(false);
 
-                mainFrame.setLocationRelativeTo(null);
-                mainFrame.pack();
-                mainFrame.setVisible(true);
+                JLabel label = new JLabel("Create a new jMonkeyEngine3 project");
+                mainFrame.getContentPane().add(label, BorderLayout.NORTH);
+
 
                 try {
                     mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/icon.png")));
@@ -37,116 +42,230 @@ public class MainWindow {
                 } catch (AWTException e) {
                     e.printStackTrace();
                 }
-//                mainFrame.addComponentListener(new ComponentAdapter() {
-//                    @Override
-//                    public void componentResized(ComponentEvent e) {
-//                        prefs.putInt(EDITOR_WIDTH, e.getComponent().getWidth());
-//                        prefs.putInt(EDITOR_HEIGHT, e.getComponent().getHeight());
-//                        System.err.println("size : "+ e.getComponent().getWidth() + " " + e.getComponent().getHeight());
-//                    }
-//
-//                    @Override
-//                    public void componentMoved(ComponentEvent e) {
-//                        prefs.putInt(EDITOR_X, e.getComponent().getX());
-//                        prefs.putInt(EDITOR_Y, e.getComponent().getY());
-//                        System.err.println(e.getComponent().getX() + " " + e.getComponent().getY());
-//                    }
-//                });
-//
-//
-//
-//                mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//                mainFrame.addWindowListener(new WindowAdapter() {
-//                    @Override
-//                    public void windowClosed(WindowEvent e) {
-//                        stop();
-//                    }
-//
-//
-//                });
-//
-//                mainFrame.setJMenuBar(createMainMenu());
-//
-//                JPanel centerPane = new JPanel();
-//                mainFrame.getContentPane().add(centerPane, BorderLayout.CENTER);
-//
-//                centerPane.setLayout(new BorderLayout());
-//
-//
-//                // Register the SwingGui layer and let it handle all of the requests
-//                // for which it is capable.
-//                SwingGui gui = spix.registerService(SwingGui.class, new SwingGui(spix, mainFrame));
-//
-//                SceneExplorerPanel sceneExplorerPanel = new SceneExplorerPanel(DockPanel.Slot.West, centerPane, gui);
-//                sceneExplorerPanel.setPreferredSize(new Dimension(250,10));
-//                sceneExplorerPanel.unDock();
-//
-//                PropPanel propertiesPanel = new PropPanel(centerPane);
-//                propertiesPanel.setPreferredSize(new Dimension(250,10));
-//                propertiesPanel.unDock();
-//
-//                JToolBar eastToolBar = new JToolBar(JToolBar.VERTICAL);
-//                eastToolBar.setFloatable(false);
-//                mainFrame.getContentPane().add(eastToolBar, BorderLayout.EAST);
-//                NoneSelectedButtonGroup groupE = new NoneSelectedButtonGroup();
-//                groupE.add( propertiesPanel.getButton());
-//                eastToolBar.add( propertiesPanel.getButton());
-//
-//                JToolBar westToolBar = new JToolBar(JToolBar.VERTICAL);
-//                westToolBar.setFloatable(false);
-//                mainFrame.getContentPane().add(westToolBar, BorderLayout.WEST);
-//                NoneSelectedButtonGroup groupW = new NoneSelectedButtonGroup();
-//                groupW.add( sceneExplorerPanel.getButton());
-//                westToolBar.add( sceneExplorerPanel.getButton());
-//
-//
-//                // Register a custom read-only display for Vector3fs that formats the values
-//                // a little better.
-//                gui.registerComponentFactory(Vector3f.class,
-//                        new DefaultComponentFactory(new Vec3fStringFunction()));
-//                gui.registerComponentFactory(SwingGui.EDIT_CONTEXT, Vector3f.class,
-//                        new DefaultComponentFactory(Vector3fPanel.class));
-//                gui.registerComponentFactory(SwingGui.EDIT_CONTEXT, Quaternion.class,
-//                        new DefaultComponentFactory(QuaternionPanel.class));
-//
-//                PropertyEditorPanel objectEditor = new PropertyEditorPanel(gui, "ui.editor");
-//                objectEditor.setPreferredSize(new Dimension(250, 100));
-//                propertiesPanel.setComponent(new JScrollPane(objectEditor));
-//
-//                stateManager.attach(new AwtPanelState(centerPane, BorderLayout.CENTER));
-//
-//
-//
-//                // Setup a selection test to change the test label
-////                spix.getBlackboard().bind("main.selection.singleSelect",
-////                                           testLabel, "text", ToStringFunction.INSTANCE);
-//
-//                // Bind the selection to the editor panel, converting objects to
-//                // property set wrappers if appropriate.
-//                spix.getBlackboard().bind("main.selection.singleSelect",
-//                        objectEditor, "object",
-//                        new ToPropertySetFunction(spix));
-//
-//                /*spix.getBlackboard().bind("main.selection.singleSelect",
-//                                           testLabel2, "text",
-//                                           Functions.compose(
-//                                                ToStringFunction.INSTANCE,
-//                                                new ToPropertySetFunction(spix)));*/
-//
-//                spix.getBlackboard().get("main.selection", SelectionModel.class).add("Test Selection");
-//
-//
-////                final MatDefEditorWindow matDefEditorWindow = new MatDefEditorWindow(gui);
-////                matDefEditorWindow.setVisible(true);
-////                mainFrame.addWindowListener(new WindowAdapter() {
-////                    @Override
-////                    public void windowClosing(WindowEvent e) {
-////                        matDefEditorWindow.dispose();
-////                    }
-////                });
-////
-////                spix.registerService(MaterialService.class, new MaterialService(stateManager.getState(MaterialAppState.class), gui));
+
+
+                JPanel container = new JPanel(new SpringLayout());
+
+                JLabel l = new JLabel("Project Name: ", JLabel.TRAILING);
+                container.add(l);
+                final JTextField projectNameField = new JTextField(10);
+                l.setLabelFor(projectNameField);
+                projectNameField.setText("MyGame");
+                container.add(projectNameField);
+
+                l = new JLabel("Default package: ", JLabel.TRAILING);
+                container.add(l);
+                final JTextField packageField  = new JTextField(10);
+                l.setLabelFor(packageField);
+                packageField.setText("com.mycompany.mygame");
+                container.add(packageField);
+
+                l = new JLabel("Template repo url: ", JLabel.TRAILING);
+                container.add(l);
+                String [] values = {"https://github.com/Nehon/base-jme.git"};
+                final JComboBox<String> repoField  = new JComboBox<String>(values);
+                repoField.setEditable(true);
+                l.setLabelFor(repoField);
+                container.add(repoField);
+
+                l = new JLabel("Create project in folder: ", JLabel.TRAILING);
+                container.add(l);
+                JPanel p = new JPanel(new FlowLayout(FlowLayout.LEADING));
+                final JTextField baseDirField  = new JTextField(20);
+                l.setLabelFor(baseDirField);
+                baseDirField.setText("");
+                p.add(baseDirField);
+                JButton b = new JButton("...");
+                b.setPreferredSize(new Dimension(20, 15));
+                p.add(b);
+                final JFileChooser fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                b.addActionListener((e) -> {
+                    int returnVal = fc.showOpenDialog(mainFrame);
+
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        //This is where a real application would open the file.
+                        baseDirField.setText(file.getPath());
+                    }
+                });
+                container.add(p);
+
+                makeCompactGrid(container,
+                        4, 2, //rows, cols
+                        6, 6,        //initX, initY
+                        6, 6);       //xPad, yPad
+
+
+                mainFrame.getContentPane().add(container, BorderLayout.CENTER);
+
+
+
+                JButton button = new JButton("Create");
+                button.addActionListener((e) -> {
+
+                    if(!validate(mainFrame, projectNameField, packageField, repoField, baseDirField)){
+                        return;
+                    }
+
+                    progressDialog.display();
+
+                    final Map<String, String> params = new HashMap<>();
+                    params.put("packageName", packageField.getText());
+                    params.put("jmeVersion", "[3.1,)");
+                    params.put("baseDir", baseDirField.getText() + "/");
+                    params.put("projectName", projectNameField.getText());
+                    params.put("templateUrl", (String) repoField.getSelectedItem());
+
+                    SwingWorker worker = new SwingWorker<Void, Step>(){
+
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            ProjectGenerator generator = new ProjectGenerator();
+                            generator.addGenerationListener((text , errors) -> publish(new Step(text, errors)));
+                            generator.generate(params);
+                            return null;
+                        }
+
+                        @Override
+                        protected void process(java.util.List<Step> steps) {
+                            steps.forEach((s) -> progressDialog.progress(s.text, s.errors));
+                        }
+
+                    };
+
+                    worker.execute();
+
+                });
+
+                mainFrame.getContentPane().add(button, BorderLayout.SOUTH);
+
+                mainFrame.pack();
+                mainFrame.setLocationRelativeTo(null);
+                mainFrame.setVisible(true);
+
+
+                progressDialog = new ProgressDialog(mainFrame, "Generation progress");
+
+            }
+
+            private boolean validate(JFrame mainFrame, JTextField projectNameField, JTextField packageField, JComboBox<String> repoField, JTextField baseDirField) {
+                if(packageField.getText().equals("")){
+                    JOptionPane.showMessageDialog(mainFrame, "Package field must not be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                if(projectNameField.getText().equals("")){
+                    JOptionPane.showMessageDialog(mainFrame, "Project name field must not be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                if(repoField.getSelectedItem().equals("")){
+                    JOptionPane.showMessageDialog(mainFrame, "Template repository url must not be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                if(baseDirField.getText().equals("")){
+                    JOptionPane.showMessageDialog(mainFrame, "Project folder must not be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+
+                return true;
             }
         });
+    }
+
+    /**
+     * Aligns the first <code>rows</code> * <code>cols</code>
+     * components of <code>parent</code> in
+     * a grid. Each component in a column is as wide as the maximum
+     * preferred width of the components in that column;
+     * height is similarly determined for each row.
+     * The parent is made just big enough to fit them all.
+     *
+     * @param rows number of rows
+     * @param cols number of columns
+     * @param initialX x location to start the grid at
+     * @param initialY y location to start the grid at
+     * @param xPad x padding between cells
+     * @param yPad y padding between cells
+     */
+    public void makeCompactGrid(Container parent,
+                                       int rows, int cols,
+                                       int initialX, int initialY,
+                                       int xPad, int yPad) {
+        SpringLayout layout;
+        try {
+            layout = (SpringLayout)parent.getLayout();
+        } catch (ClassCastException exc) {
+            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+            return;
+        }
+
+        //Align all cells in each column and make them the same width.
+        Spring x = Spring.constant(initialX);
+        for (int c = 0; c < cols; c++) {
+            Spring width = Spring.constant(0);
+            for (int r = 0; r < rows; r++) {
+                width = Spring.max(width,
+                        getConstraintsForCell(r, c, parent, cols).
+                                getWidth());
+            }
+            for (int r = 0; r < rows; r++) {
+                SpringLayout.Constraints constraints =
+                        getConstraintsForCell(r, c, parent, cols);
+                constraints.setX(x);
+                constraints.setWidth(width);
+            }
+            x = Spring.sum(x, Spring.sum(width, Spring.constant(xPad)));
+        }
+
+        //Align all cells in each row and make them the same height.
+        Spring y = Spring.constant(initialY);
+        for (int r = 0; r < rows; r++) {
+            Spring height = Spring.constant(0);
+            for (int c = 0; c < cols; c++) {
+                height = Spring.max(height,
+                        getConstraintsForCell(r, c, parent, cols).
+                                getHeight());
+            }
+            for (int c = 0; c < cols; c++) {
+                SpringLayout.Constraints constraints =
+                        getConstraintsForCell(r, c, parent, cols);
+                constraints.setY(y);
+                constraints.setHeight(height);
+            }
+            y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
+        }
+
+        //Set the parent's size.
+        SpringLayout.Constraints pCons = layout.getConstraints(parent);
+        pCons.setConstraint(SpringLayout.SOUTH, y);
+        pCons.setConstraint(SpringLayout.EAST, x);
+    }
+
+    /* Used by makeCompactGrid. */
+    private SpringLayout.Constraints getConstraintsForCell(
+            int row, int col,
+            Container parent,
+            int cols) {
+        SpringLayout layout = (SpringLayout) parent.getLayout();
+        Component c = parent.getComponent(row * cols + col);
+        return layout.getConstraints(c);
+    }
+
+    private class Step{
+        String text;
+        java.util.List<String> errors;
+
+        public Step(String text, java.util.List<String> errors) {
+            this.text = text;
+            this.errors = errors;
+        }
+
+        @Override
+        public String toString() {
+            return "Step{" +
+                    "text='" + text + '\'' +
+                    ", errors=" + errors +
+                    '}';
+        }
     }
 }
