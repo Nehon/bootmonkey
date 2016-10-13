@@ -22,7 +22,7 @@ Very Basic project scaffolding tool for JME3.
        - projectName: the project name.
        - packageName: the new project base package.
 
- 3. Clean up
+3. Clean up
 
        Will copy and delete files according to what's found in the yaml configuration file
        the file must be follow that structure:
@@ -33,4 +33,4 @@ Very Basic project scaffolding tool for JME3.
        delete:
            - [fileORDirectoryPath]
            - ...
-    ```
+       ```
