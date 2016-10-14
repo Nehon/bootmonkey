@@ -14,7 +14,6 @@ cache:
 
 os:
   - linux
-  - osx
 
 install:
   - ./gradlew assemble
