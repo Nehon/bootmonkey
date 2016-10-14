@@ -22,20 +22,21 @@ install:
 script:
   - ./gradlew check
 
-#deploy:
-#  provider: releases
-#  api_key:
-#    secure: PuEsJd6juXBH29ByITW3ntSAyrwWs0IeFvXJ5Y2YlhojhSMtTwkoWeB6YmDJWP4fhzbajk4TQ1HlOX2IxJXSW/8ShOEIUlGXz9fHiST0dkSM+iRAUgC5enCLW5ITPTiem7eY9ZhS9miIam7ngce9jHNMh75PTzZrEJtezoALT9w=
-#  file_glob: true
-#  file: "${RELEASE_DIST}"
-#  skip_cleanup: true
-#  on:
-#    repo: jMonkeyEngine/jmonkeyengine
-#    tags: true
+deploy:
+  provider: releases
+  api_key:
+    secure: PuEsJd6juXBH29ByITW3ntSAyrwWs0IeFvXJ5Y2YlhojhSMtTwkoWeB6YmDJWP4fhzbajk4TQ1HlOX2IxJXSW/8ShOEIUlGXz9fHiST0dkSM+iRAUgC5enCLW5ITPTiem7eY9ZhS9miIam7ngce9jHNMh75PTzZrEJtezoALT9w=
+  file_glob: true
+  file: "${RELEASE_DIST}"
+  skip_cleanup: true
+  on:
+    repo: Nehon/bootmonkey
+    tags: true
 
-#
-#before_deploy:
-#  - ./gradlew bundleNative
-#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export RELEASE_DIST=$(ls build/linux/*.*); fi
-#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export RELEASE_DIST=$(ls build/mac/*.app); fi
 
+before_deploy:
+  - ./gradlew bundleNative
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export RELEASE_DIST=$(ls build/linux/*.*); fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export RELEASE_DIST=$(ls build/mac/*.app); fi
+
+ 
