@@ -1,5 +1,7 @@
 group 'com.jme3'
 version '1.0-SNAPSHOT'
+import org.apache.tools.ant.taskdefs.condition.Os
+
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -66,7 +68,6 @@ distributions {
 parcl {
     exe {
         exeName = "BootMonkey"
-
     }
 
     app {
@@ -83,8 +84,24 @@ parcl {
         binName = "bootmonkey"
 
     }
+}
+
+
+task createBundle(type: Zip, dependsOn:bundleNative) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        from 'build/windows'
+        archiveName 'bootmonkey-windows.zip'
+    } else if (Os.isFamily(Os.FAMILY_MAC)){
+        from 'build/mac'
+        archiveName 'bootmonkey-osx.zip'
+    } else {
+        from 'build/linux'
+        archiveName 'bootmonkey-linux.zip'
+    }
+    include '**/*'
 
 }
+
 
 // Either way we end up with dupes if we don't do this
 distZip {

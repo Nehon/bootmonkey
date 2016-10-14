@@ -34,8 +34,6 @@ deploy:
 
 
 before_deploy:
-  - ./gradlew bundleNative
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export RELEASE_DIST=$(ls build/linux/bootmonkey); fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export RELEASE_DIST=$(ls build/mac/*.app); fi
-
+  - ./gradlew createBundle
+  - RELEASE_DIST=$(ls build/distributions/*.zip)
  
