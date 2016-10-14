@@ -25,7 +25,7 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: PuEsJd6juXBH29ByITW3ntSAyrwWs0IeFvXJ5Y2YlhojhSMtTwkoWeB6YmDJWP4fhzbajk4TQ1HlOX2IxJXSW/8ShOEIUlGXz9fHiST0dkSM+iRAUgC5enCLW5ITPTiem7eY9ZhS9miIam7ngce9jHNMh75PTzZrEJtezoALT9w=
+    secure: 347cc697b85cadee97f4653cac128ff8e292e50f
   file_glob: true
   file: "${RELEASE_DIST}"
   skip_cleanup: true
