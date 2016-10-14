@@ -90,13 +90,13 @@ parcl {
 task createBundle(type: Zip, dependsOn:bundleNative) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         from 'build/windows'
-        archiveName 'bootmonkey-windows.zip'
+        archiveName "bootmonkey-$version-windows-app.zip"
     } else if (Os.isFamily(Os.FAMILY_MAC)){
         from 'build/mac'
-        archiveName 'bootmonkey-osx.zip'
+        archiveName "bootmonkey-$version-osx-app.zip"
     } else {
         from 'build/linux'
-        archiveName 'bootmonkey-linux.zip'
+        archiveName "bootmonkey-$version-linux-app.zip"
     }
     include '**/*'
 

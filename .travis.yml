@@ -35,5 +35,5 @@ deploy:
 
 before_deploy:
   - ./gradlew createBundle
-  - RELEASE_DIST=$(ls build/distributions/*.zip)
+  - RELEASE_DIST=$(ls build/distributions/*app.zip)
  
