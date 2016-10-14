@@ -24,7 +24,7 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: 347cc697b85cadee97f4653cac128ff8e292e50f
+    secure: ${GH_TOKEN}
   file_glob: true
   file: "${RELEASE_DIST}"
   skip_cleanup: true
