@@ -67,7 +67,6 @@ parcl {
     exe {
         exeName = "BootMonkey"
 
-        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
     }
 
     app {
@@ -77,12 +76,12 @@ parcl {
         displayName = 'BootMonkey'
         identifier = 'com.jme3.bootmonkey'
         copyright = 'Copyright 2016 jMonkeyEngine'
-        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+       // withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
     }
 
     linux {
         binName = "bootmonkey"
-        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+
     }
 
 }
