@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: "org.mini2Dx.parcl"
 mainClassName='com.jme3.bootmonkey.ui.MainWindow'
 
 sourceCompatibility = 1.8
@@ -10,6 +11,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenLocal()
     mavenCentral()
+
 }
 
 dependencies {
@@ -18,10 +20,74 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'org.yaml:snakeyaml:1.17'
     compile "com.github.insubstantial:substance:[7.3,)"
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://mini2dx.org/maven/content/repositories/thirdparty" }
+        maven { url "https://mini2dx.org/maven/content/repositories/releases" }
+    }
+    dependencies {
+        //classpath 'com.github.mini2Dx:parcl:v1.0.10'
+        classpath 'org.mini2Dx:parcl:1.0.7'
+     //   classpath 'com.github.spullara.mustache.java:compiler:0.9.4'
+    }
+}
+
 
 task runProto(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "com.jme3.bootmonkey.Proto"
+}
+
+// Create a custom server start script in the distribution
+task makeScript(type: CreateStartScripts) {
+    mainClassName = "com.jme3.bootmonkey.ui.MainWindow"
+    applicationName = "bootmonkey"
+    outputDir = new File(project.buildDir, 'scripts')
+    classpath = jar.outputs.files + project.configurations.runtime
+  //  defaultJvmOpts = ['-Dlog4j.configurationFile=server-log4j2.xml']
+}
+
+// I think this is ultimately clearer than the above
+distributions {
+    main {
+        contents {
+            from(makeScript) {
+                into "bin"
+            }
+        }
+    }
+}
+
+parcl {
+    exe {
+        exeName = "BootMonkey"
+
+        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+    }
+
+    app {
+        appName = "BootMonkey"
+        icon = "src/main/resources/icons/icon.icns"
+        applicationCategory = "public.app-category.jme3-tool-suite"
+        displayName = 'BootMonkey'
+        identifier = 'com.jme3.bootmonkey'
+        copyright = 'Copyright 2016 jMonkeyEngine'
+        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+    }
+
+    linux {
+        binName = "bootmonkey"
+        withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+    }
+
+}
+
+// Either way we end up with dupes if we don't do this
+distZip {
+    duplicatesStrategy = 'exclude'
 }
