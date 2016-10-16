@@ -77,7 +77,7 @@ parcl {
         displayName = 'BootMonkey'
         identifier = 'com.jme3.bootmonkey'
         copyright = 'Copyright 2016 jMonkeyEngine'
-       // withJre("/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home")
+
     }
 
     linux {
@@ -102,6 +102,20 @@ task createBundle(type: Zip, dependsOn:bundleNative) {
 
 }
 
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    baseName = project.name + '-exec'
+    manifest {
+        attributes 'Implementation-Title': 'Bootmonkey executable jar',
+                'Implementation-Version': version,
+                'Main-Class': "$mainClassName"
+    }
+    with jar
+}
 
 // Either way we end up with dupes if we don't do this
 distZip {
