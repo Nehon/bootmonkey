@@ -35,7 +35,7 @@ deploy:
 
 before_deploy:
   - ./gradlew fatJar
-  - RELEASE_DIST=$(ls build/zip/*-exec-*.jar)
+  - RELEASE_DIST=$(ls build/libs/*-exec-*.jar)
  # - ./gradlew createBundle
  # - RELEASE_DIST=$(ls build/distributions/*app.zip)
  
