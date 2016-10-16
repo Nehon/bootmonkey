@@ -88,6 +88,9 @@ public class ProjectGenerator {
      * projectName: the project name.
      * packageName: the new project base package.
      *
+     * optional params:
+     * tagName: can provide a branch name or a tag name in its complete form (ie refs/tags/myTag or refs/heads/myBranch)
+     *
      * Those params can be used as template names in the replacement.yml file (ie: ${projectName})
      *
      * this method returns a list of error that occurred during the generation
@@ -101,12 +104,13 @@ public class ProjectGenerator {
         String baseDir = params.get("baseDir");
         String projectName = params.get("projectName");
         String packageName = params.get("packageName");
+        String tagName =  params.get("tagName");
         String packagePath = packageName.replaceAll("\\.", "/");
         params.put("packagePath", packagePath);
         String projectPath = baseDir + projectName + "/";
 
         progress("Cloning template project...");
-        if(!cloneTemplate(templateUrl, projectPath)){
+        if(!cloneTemplate(templateUrl, projectPath, tagName)){
             progress("Aborted.");
             return;
         }
@@ -147,9 +151,23 @@ public class ProjectGenerator {
 
     }
 
-    private boolean cloneTemplate(String templateUrl, String projectPath) {
+    private boolean cloneTemplate(String templateUrl, String projectPath, String tagName) {
         try (Git git = Git.cloneRepository().setURI(templateUrl)
                 .setDirectory(new File(projectPath)).call()){
+
+            //This is how you checkout a branch or a tag, note that it will create a detached HEAD,
+            // but we don't really care as we will wipe out git config once the file are properly downloaded.
+            if(tagName != null){
+                if(tagName.startsWith("refs/heads")){
+                    //it's a branch
+                    //Note that the branch name as we get it is "refs/heads/branchName", but to check it out we need to call it "origin/branchName"
+                    git.checkout().setName( "origin/" + tagName.replaceAll("refs/heads/","") ).call();
+                } else {
+                    //it's a tag
+                    git.checkout().setName( tagName ).call();
+                }
+            }
+
             return true;
         } catch (GitAPIException | JGitInternalException e) {
             reportError("Error cloning repository " + templateUrl , e);
