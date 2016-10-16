@@ -8,13 +8,20 @@ import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 /**
  * Created by Nehon on 12/10/2016.
  */
 public class MainWindow {
 
+    public static final String REPOSITORIES = "bootmonkey.repositories";
+    public static final String LAST_SELECTED_REPOSITORY = "bootmonkey.lastSelectedRepository";
+    public static final String DEFAULT_REPOSITORY = "https://github.com/Nehon/base-jme.git";
+    public static final String LAST_DIRECTORY = "bootmonkey.lastDirectory";
     private ProgressDialog progressDialog;
+    private Preferences prefs = Preferences.userNodeForPackage(MainWindow.class);
+    private String repoList;
 
     public static void main(String... argv) throws Exception{
         new MainWindow();
@@ -62,9 +69,13 @@ public class MainWindow {
 
                 l = new JLabel("Template repo url: ", JLabel.TRAILING);
                 container.add(l);
-                String [] values = {"https://github.com/Nehon/base-jme.git"};
+
+                repoList = prefs.get(REPOSITORIES, DEFAULT_REPOSITORY);
+                String lastRepo = prefs.get(LAST_SELECTED_REPOSITORY, DEFAULT_REPOSITORY);
+                String [] values = repoList.split("\\|");
                 final JComboBox<String> repoField  = new JComboBox<String>(values);
                 repoField.setEditable(true);
+                repoField.setSelectedItem(lastRepo);
                 l.setLabelFor(repoField);
                 container.add(repoField);
 
@@ -73,7 +84,8 @@ public class MainWindow {
                 JPanel p = new JPanel(new FlowLayout(FlowLayout.LEADING));
                 final JTextField baseDirField  = new JTextField(20);
                 l.setLabelFor(baseDirField);
-                baseDirField.setText("");
+                String lastDir = prefs.get(LAST_DIRECTORY, "");
+                baseDirField.setText(lastDir);
                 p.add(baseDirField);
                 JButton b = new JButton("...");
                 b.setPreferredSize(new Dimension(20, 15));
@@ -111,11 +123,19 @@ public class MainWindow {
                     progressDialog.display();
 
                     final Map<String, String> params = new HashMap<>();
+                    String repoUrl = (String) repoField.getSelectedItem();
+                    String baseDir = baseDirField.getText();
                     params.put("packageName", packageField.getText());
                     params.put("jmeVersion", "[3.1,)");
-                    params.put("baseDir", baseDirField.getText() + "/");
+                    params.put("baseDir",  baseDir + "/");
                     params.put("projectName", projectNameField.getText());
-                    params.put("templateUrl", (String) repoField.getSelectedItem());
+                    params.put("templateUrl", repoUrl);
+                    if(!repoList.contains(repoUrl)){
+                        repoList += "|" + repoUrl;
+                        prefs.put(REPOSITORIES, repoList);
+                    }
+                    prefs.put(LAST_SELECTED_REPOSITORY, repoUrl);
+                    prefs.put(LAST_DIRECTORY, baseDir);
 
                     SwingWorker worker = new SwingWorker<Void, Step>(){
 
