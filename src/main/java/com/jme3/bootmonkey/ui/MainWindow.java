@@ -6,8 +6,8 @@ import org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 /**
@@ -44,8 +44,13 @@ public class MainWindow {
 
 
                 try {
-                    mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/icon.png")));
-                    SystemTray.getSystemTray().add(new TrayIcon(Toolkit.getDefaultToolkit().getImage("/icons/icon.png")));
+                    List<Image> icons = new ArrayList<>();
+                    icons.add(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/iconx16.png")));
+                    icons.add(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/iconx32.png")));
+                    icons.add(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/iconx64.png")));
+                    icons.add(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/iconx128.png")));
+                    mainFrame.setIconImages(icons);
+                    SystemTray.getSystemTray().add(new TrayIcon(Toolkit.getDefaultToolkit().getImage("/icons/icon16.png")));
                 } catch (AWTException e) {
                     e.printStackTrace();
                 }
