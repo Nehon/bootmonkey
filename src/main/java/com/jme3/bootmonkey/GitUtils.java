@@ -16,7 +16,7 @@ public class GitUtils {
         Collection<Ref> refs = Git.lsRemoteRepository().setRemote(repoUrl).call();
         List<String> names = new ArrayList<>();
         refs.forEach((ref) -> {
-            System.err.println(ref);
+         //   System.err.println(ref);
             if(!ref.getName().equals("HEAD" ) && !ref.getName().equals("refs/heads/master") && !ref.getName().startsWith("refs/pull")){
                 names.add(ref.getName());
             }
