@@ -6,6 +6,7 @@ import org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -91,6 +92,13 @@ public class MainWindow {
                 l = new JLabel("Template version: ", JLabel.TRAILING);
                 container.add(l);
                 versionField  = new JComboBox<String>();
+                versionField.setRenderer((JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) -> {
+                    JLabel label1 = new JLabel(value);
+                    if(value.contains("/")){
+                        label1.setText(value.substring(value.lastIndexOf("/") + 1));
+                    }
+                    return label1;
+                });
                 container.add(versionField);
                 versionField.addItem("SNAPSHOT");
                 //fetching data
