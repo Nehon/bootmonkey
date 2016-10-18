@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -82,11 +83,29 @@ public class MainWindow {
                 repoList = prefs.get(REPOSITORIES, DEFAULT_REPOSITORY);
                 String lastRepo = prefs.get(LAST_SELECTED_REPOSITORY, DEFAULT_REPOSITORY);
                 String [] values = repoList.split("\\|");
+
+                JPanel repoFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+
                 repoField  = new JComboBox<String>(values);
                 repoField.setEditable(true);
                 repoField.setSelectedItem(lastRepo);
                 l.setLabelFor(repoField);
-                container.add(repoField);
+                repoFieldPanel.add(repoField);
+                //creating an info button.
+                JButton infoButton = new JButton("?");
+                infoButton.setPreferredSize(new Dimension(25, 20));
+                repoFieldPanel.add(infoButton);
+                container.add(repoFieldPanel);
+                infoButton.addActionListener((e) -> {
+                    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+                    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                        try {
+                            desktop.browse(new URI((String)repoField.getSelectedItem()));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
 
                 //Template version field
                 l = new JLabel("Template version: ", JLabel.TRAILING);
