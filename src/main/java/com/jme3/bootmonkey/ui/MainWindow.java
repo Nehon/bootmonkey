@@ -150,17 +150,59 @@ public class MainWindow {
                 });
                 container.add(browseFieldPanel);
 
+                //The advanced settings frame
+                final JFrame advancedSettingsFrame=new JFrame("Advanced Settings");
+                advancedSettingsFrame.getContentPane().setLayout(new BorderLayout());
+                advancedSettingsFrame.setResizable(false);
+                
+                final JPanel settingsContainer = new JPanel(new SpringLayout());
+                
+                l=new JLabel("JME version");
+                final JTextField jmeVersionField  = new JTextField(10);
+                jmeVersionField.setText("[3.1)");
+                l.setLabelFor(jmeVersionField);
+                
+                settingsContainer.add(l);    
+                settingsContainer.add(jmeVersionField);
+                
+                advancedSettingsFrame.getContentPane().add(settingsContainer, BorderLayout.CENTER);
+                
+                makeCompactGrid(settingsContainer,
+                        1, 2, //rows, cols
+                        6, 6,        //initX, initY
+                        7, 7);       //xPad, yPad
+                
+                JButton button = new JButton("Close");
+                button.addActionListener((e) -> {
+                    advancedSettingsFrame.setVisible(false);
+                });
+                advancedSettingsFrame.getContentPane().add(button, BorderLayout.SOUTH);
+                
+                //The advanced settings button
+                l = new JLabel("Advanced Settings: ", JLabel.TRAILING);                 
+                JButton defineButton = new JButton("Show advanced settings");
+                defineButton.addActionListener((e) -> {
+                    advancedSettingsFrame.pack();
+                    advancedSettingsFrame.setLocationRelativeTo(mainFrame);
+                    advancedSettingsFrame.setVisible(true);
+                });
+                
+                JPanel settingsPanel=new JPanel(new FlowLayout(FlowLayout.LEADING));
+                settingsPanel.add(defineButton);
+                
+                container.add(l);
+                container.add(settingsPanel);
+                
                 //making the layout.
                 makeCompactGrid(container,
-                        5, 2, //rows, cols
-                        6, 6,        //initX, initY
-                        6, 6);       //xPad, yPad
+                        6, 2, //rows, cols
+                        5, 5,        //initX, initY
+                        7, 7);       //xPad, yPad
 
                 mainFrame.getContentPane().add(container, BorderLayout.CENTER);
-
-
+                
                 //The create button
-                JButton button = new JButton("Create");
+                button = new JButton("Create");
                 button.addActionListener((e) -> {
 
                     if(!validate(mainFrame, projectNameField, packageField, repoField, baseDirField)){
@@ -173,7 +215,7 @@ public class MainWindow {
 
                     savePreferences(repoUrl, baseDir);
 
-                    new ProjectGenerationWorker(projectNameField, packageField, repoUrl, baseDir).execute();
+                    new ProjectGenerationWorker(projectNameField, packageField, jmeVersionField, repoUrl, baseDir).execute();
 
                 });
                 mainFrame.getContentPane().add(button, BorderLayout.SOUTH);
@@ -276,13 +318,15 @@ public class MainWindow {
 
         Map<String, String> params;
 
-        public ProjectGenerationWorker(JTextField projectNameField, JTextField packageField, String repoUrl, String baseDir) {
+        public ProjectGenerationWorker(JTextField projectNameField, JTextField packageField, JTextField jmeVersionField, String repoUrl, String baseDir) {
             params = new HashMap<>();
             params.put("packageName", packageField.getText());
-            params.put("jmeVersion", "[3.1,)");
+            params.put("jmeVersion", jmeVersionField.getText());
             params.put("baseDir",  baseDir + "/");
             params.put("projectName", projectNameField.getText());
             params.put("templateUrl", repoUrl);
+            
+            System.out.println(params.get("jmeVersion"));
         }
 
         @Override
