@@ -150,35 +150,18 @@ public class MainWindow {
                 });
                 container.add(browseFieldPanel);
 
-                //The advanced settings frame
+                /*The advanced settings frame
                 final JFrame advancedSettingsFrame=new JFrame("Advanced Settings");
                 advancedSettingsFrame.getContentPane().setLayout(new BorderLayout());
-                advancedSettingsFrame.setResizable(false);
+                advancedSettingsFrame.setResizable(false);*/
                 
-                final JPanel settingsContainer = new JPanel(new SpringLayout());
-                
-                l=new JLabel("JME version");
-                final JTextField jmeVersionField  = new JTextField(10);
-                jmeVersionField.setText("[3.1)");
-                l.setLabelFor(jmeVersionField);
-                
-                settingsContainer.add(l);    
-                settingsContainer.add(jmeVersionField);
-                
-                advancedSettingsFrame.getContentPane().add(settingsContainer, BorderLayout.CENTER);
-                
-                makeCompactGrid(settingsContainer,
-                        1, 2, //rows, cols
-                        6, 6,        //initX, initY
-                        7, 7);       //xPad, yPad
-                
-                JButton button = new JButton("Close");
+                /*JButton button = new JButton("Close");
                 button.addActionListener((e) -> {
                     advancedSettingsFrame.setVisible(false);
                 });
-                advancedSettingsFrame.getContentPane().add(button, BorderLayout.SOUTH);
+                advancedSettingsFrame.getContentPane().add(button, BorderLayout.SOUTH);*/
                 
-                //The advanced settings button
+                /*The advanced settings button
                 l = new JLabel("Advanced Settings: ", JLabel.TRAILING);                 
                 JButton defineButton = new JButton("Show advanced settings");
                 defineButton.addActionListener((e) -> {
@@ -191,9 +174,27 @@ public class MainWindow {
                 settingsPanel.add(defineButton);
                 
                 container.add(l);
-                container.add(settingsPanel);
+                container.add(settingsPanel);*/
                 
                 //making the layout.
+                
+                //final JPanel settingsContainer = new JPanel(new SpringLayout());
+                
+                l=new JLabel("JME Version code:", JLabel.TRAILING);
+                final JTextField jmeVersionField  = new JTextField(10);
+                jmeVersionField.setText("[3.1)");
+                l.setLabelFor(jmeVersionField);
+                
+                container.add(l);    
+                container.add(jmeVersionField);
+                
+                //mainFrame.getContentPane().add(settingsContainer, BorderLayout.SOUTH);
+                
+                /*makeCompactGrid(settingsContainer,
+                        1, 2, //rows, cols
+                        6, 6,        //initX, initY
+                        7, 7);       //xPad, yPad*/
+                
                 makeCompactGrid(container,
                         6, 2, //rows, cols
                         5, 5,        //initX, initY
@@ -202,7 +203,7 @@ public class MainWindow {
                 mainFrame.getContentPane().add(container, BorderLayout.CENTER);
                 
                 //The create button
-                button = new JButton("Create");
+                JButton button = new JButton("Create");
                 button.addActionListener((e) -> {
 
                     if(!validate(mainFrame, projectNameField, packageField, repoField, baseDirField)){
