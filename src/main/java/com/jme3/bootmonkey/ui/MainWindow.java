@@ -182,7 +182,7 @@ public class MainWindow {
                 
                 l=new JLabel("JME Version code:", JLabel.TRAILING);
                 final JTextField jmeVersionField  = new JTextField(10);
-                jmeVersionField.setText("[3.1)");
+                jmeVersionField.setText("[3.1,)");
                 l.setLabelFor(jmeVersionField);
                 
                 container.add(l);    
